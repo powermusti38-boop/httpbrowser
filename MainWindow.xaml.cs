@@ -58,6 +58,7 @@ public partial class MainWindow : Window
             if (closing) return;
             var core = Browser.CoreWebView2;
             core.Settings.AreHostObjectsAllowed = false;
+            await InitializeVideoInfoAsync(core);
             core.ContainsFullScreenElementChanged += (_, _) => SetFullscreen(core.ContainsFullScreenElement);
             core.LaunchingExternalUriScheme += (_, args) => args.Cancel = true;
             core.PermissionRequested += (_, args) => args.State = CoreWebView2PermissionState.Deny;
@@ -209,6 +210,7 @@ public partial class MainWindow : Window
     }
     private void WindowClosing(object? sender, CancelEventArgs e)
     {
+        videoTimer.Stop(); if (videoPopup is not null) videoPopup.IsOpen = false;
         closing = true; initialized.TrySetResult(false); Browser.Dispose();
     }
     internal CoreWebView2 Core => Browser.CoreWebView2;

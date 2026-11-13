@@ -1,6 +1,10 @@
 # HTTPBrowser / StreamBrowser
 
-Reiner Windows-Browser, Version 1.0.7. Benötigt Microsoft Edge WebView2 Runtime. Die .NET-Laufzeit ist im Download enthalten.
+Reiner Windows-Browser, Version 1.0.8. Benötigt Microsoft Edge WebView2 Runtime. Die .NET-Laufzeit ist im Download enthalten.
+
+Im Vollbild erscheint unten rechts eine Anzeige: Stream-/Seitentitel in Grün, aktuelle Zeit und Gesamtlänge in Gelb sowie der zusammenhängend vorausgepufferte Vorrat in Violett. Alle Zeiten sind Minuten; bei unbekannter Länge steht Live. Eingebettete HTML-Videos werden ebenfalls berücksichtigt. Der Name stammt aus den verfügbaren Medienmetadaten oder ersatzweise dem Seitentitel.
+
+Videos erhalten preload=auto. Beim Pausieren wird weiteres Vorladen angefordert; bei einem von der Seite als window.hls bereitgestellten hls.js-Player wird das Pufferziel für endliche Videos auf die verbleibende Laufzeit angehoben. Die App ersetzt den Player nicht und startet keine eigene Mediendownloads. Webseite, Player, Browser und Speichergrenzen können das Puffern weiterhin begrenzen. Bis zum Filmende vorzuladen ist daher keine allgemeine Garantie. Die Anzeige zeigt den tatsächlich vorhandenen Vorrat vor der Abspielposition.
 
 ## Starten
 
