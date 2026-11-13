@@ -1,0 +1,40 @@
+<Window x:Class="StreamBrowser.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wv="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        Title="StreamBrowser · HTTP · Video an VLC" Width="1280" Height="820" MinWidth="800" MinHeight="520"
+        Background="#101820" Foreground="#E9F1F5" Loaded="WindowLoaded" Closing="WindowClosing">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="13,8"/><Setter Property="Margin" Value="4,0"/>
+            <Setter Property="Background" Value="#223642"/><Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#3B5664"/><Setter Property="Cursor" Value="Hand"/>
+        </Style>
+    </Window.Resources>
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Padding="12" Background="#16252F">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                    <Button Content="←" ToolTip="Zurück" Click="BackClick"/>
+                    <Button Content="→" ToolTip="Vorwärts" Click="ForwardClick"/>
+                    <Button Content="↻" ToolTip="Neu laden / Browservideo zurückholen" Click="ReloadClick"/>
+                </StackPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Content="Öffnen" Click="NavigateClick"/>
+                    <Button Content="VLC wählen …" Click="ChooseVlcClick"/>
+                </StackPanel>
+                <TextBox x:Name="Address" FontSize="15" Padding="10,7" Margin="12,0" KeyDown="AddressKeyDown"
+                         Background="#F4F7F9" Foreground="#152732" Text="https://taraftarium.co/"/>
+            </DockPanel>
+        </Border>
+        <Border DockPanel.Dock="Bottom" Background="#16252F" Padding="14,9">
+            <DockPanel>
+                <Button x:Name="PopupButton" DockPanel.Dock="Right" Visibility="Collapsed" Content="Seitenfenster öffnen …" Click="OpenPopupClick"/>
+                <Button x:Name="ReturnButton" DockPanel.Dock="Right" Visibility="Collapsed"
+                        Content="Im Browser neu laden" Click="ReloadClick"/>
+                <TextBlock x:Name="Status" Text="Browser wird gestartet …" VerticalAlignment="Center" TextWrapping="Wrap"/>
+            </DockPanel>
+        </Border>
+        <wv:WebView2 x:Name="Browser" DefaultBackgroundColor="#FFFFFF"/>
+    </DockPanel>
+</Window>

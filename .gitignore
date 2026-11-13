@@ -1,0 +1,12 @@
+bin/
+obj/
+release/
+Tests/bin/
+Tests/obj/
+Tests/fixtures/
+/Diagnostics/*
+!/Diagnostics/*.cs
+verification/
+.vs/
+.github-upload.json
+*.user

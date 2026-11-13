@@ -1,0 +1,33 @@
+using System.Text.Json;
+
+namespace StreamBrowser.Core;
+
+public record StreamSource(string Url, string Referer, string UserAgent);
+public record ProbeResult(bool Success, string Message, string Kind = "", bool IsLive = false, string[]? Resources = null)
+{
+    public string[] ResourceUrls => Resources ?? [];
+}
+public sealed class Settings
+{
+    public string? VlcPath { get; set; }
+    public string HomeUrl { get; set; } = "https://taraftarium.co/";
+    public static string DataDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "StreamBrowser");
+    public static Settings Load()
+    {
+        try { return JsonSerializer.Deserialize<Settings>(File.ReadAllText(Path.Combine(DataDirectory, "settings.json"))) ?? new(); }
+        catch (Exception e) when (e is IOException or JsonException or UnauthorizedAccessException) { return new(); }
+    }
+    public void Save()
+    {
+        Directory.CreateDirectory(DataDirectory);
+        File.WriteAllText(Path.Combine(DataDirectory, "settings.json"), JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true }));
+    }
+}
+public static class WebAddress
+{
+    public static bool TryHttp(string? text, out Uri uri)
+    {
+        uri = null!;
+        return Uri.TryCreate(text, UriKind.Absolute, out uri!) && uri.Scheme is "https" or "http" && string.IsNullOrEmpty(uri.UserInfo);
+    }
+}
