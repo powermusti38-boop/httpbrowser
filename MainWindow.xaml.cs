@@ -56,6 +56,7 @@ public partial class MainWindow : Window
         this.popupEnvironment = popupEnvironment;
         this.popupRequest = popupRequest;
         InitializeComponent();
+        // WPF WebView2 forwards native accelerator keys into this routed event.
         PreviewKeyDown += async (_, e) =>
         {
             if (e.Key == Key.F11) { e.Handled = true; if (!e.IsRepeat) await ToggleFullscreenAsync(); }
@@ -90,16 +91,6 @@ public partial class MainWindow : Window
             var core = Browser.CoreWebView2;
             core.Settings.AreHostObjectsAllowed = false;
             core.ContainsFullScreenElementChanged += (_, _) => SetFullscreen(core.ContainsFullScreenElement);
-            Browser.CoreWebView2Controller.AcceleratorKeyPressed += async (_, args) =>
-            {
-                if (args.KeyEventKind is not (CoreWebView2KeyEventKind.KeyDown or CoreWebView2KeyEventKind.SystemKeyDown)) return;
-                if (args.VirtualKey == 122)
-                {
-                    args.Handled = true;
-                    if (!args.PhysicalKeyStatus.WasKeyDown) await ToggleFullscreenAsync();
-                }
-                else if (args.VirtualKey == 27 && fullscreen) { args.Handled = true; await LeaveFullscreenAsync(); }
-            };
             // A requested window must receive its scripts before adoption, then its
             // request handlers after adoption. It must share the opener's environment.
             string bridgeScript;
@@ -316,3 +307,4 @@ public partial class MainWindow : Window
     internal Task DiagnosticCheck(BrowserSession session) => CheckVideoAsync(session);
     internal VlcLauncher DiagnosticVlc => vlc;
 }
+
