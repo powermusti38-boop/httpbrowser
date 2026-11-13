@@ -2,14 +2,8 @@ using System.Text.Json;
 
 namespace StreamBrowser.Core;
 
-public record StreamSource(string Url, string Referer, string UserAgent);
-public record ProbeResult(bool Success, string Message, string Kind = "", bool IsLive = false, string[]? Resources = null)
-{
-    public string[] ResourceUrls => Resources ?? [];
-}
 public sealed class Settings
 {
-    public string? VlcPath { get; set; }
     public List<string> StartUrls { get; set; } = ["https://taraftarium.co/canli/", "http://oha.to/", "http://vavoo.to/"];
     public string HomeUrl { get; set; } = "https://taraftarium.co/";
     public static string DataDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "StreamBrowser");
