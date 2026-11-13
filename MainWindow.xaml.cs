@@ -30,6 +30,11 @@ public partial class MainWindow : Window
     private CancellationTokenSource navigation = new();
     private int frameSequence;
     private bool handingOff, closing;
+    private bool fullscreen;
+    private WindowState previousWindowState;
+    private WindowStyle previousWindowStyle;
+    private ResizeMode previousResizeMode;
+    private bool previousTopmost;
     private readonly bool runDiagnostics;
     private readonly CoreWebView2Environment? popupEnvironment;
     private readonly CoreWebView2NewWindowRequestedEventArgs? popupRequest;
@@ -51,6 +56,11 @@ public partial class MainWindow : Window
         this.popupEnvironment = popupEnvironment;
         this.popupRequest = popupRequest;
         InitializeComponent();
+        PreviewKeyDown += async (_, e) =>
+        {
+            if (e.Key == Key.F11) { e.Handled = true; if (!e.IsRepeat) await ToggleFullscreenAsync(); }
+            else if (e.Key == Key.Escape && fullscreen) { e.Handled = true; await LeaveFullscreenAsync(); }
+        };
         if (Environment.GetCommandLineArgs().Contains("--diagnostics"))
         {
             ShowInTaskbar = false;
@@ -79,6 +89,17 @@ public partial class MainWindow : Window
             if (closing) return;
             var core = Browser.CoreWebView2;
             core.Settings.AreHostObjectsAllowed = false;
+            core.ContainsFullScreenElementChanged += (_, _) => SetFullscreen(core.ContainsFullScreenElement);
+            Browser.CoreWebView2Controller.AcceleratorKeyPressed += async (_, args) =>
+            {
+                if (args.KeyEventKind is not (CoreWebView2KeyEventKind.KeyDown or CoreWebView2KeyEventKind.SystemKeyDown)) return;
+                if (args.VirtualKey == 122)
+                {
+                    args.Handled = true;
+                    if (!args.PhysicalKeyStatus.WasKeyDown) await ToggleFullscreenAsync();
+                }
+                else if (args.VirtualKey == 27 && fullscreen) { args.Handled = true; await LeaveFullscreenAsync(); }
+            };
             // A requested window must receive its scripts before adoption, then its
             // request handlers after adoption. It must share the opener's environment.
             string bridgeScript;
@@ -134,7 +155,11 @@ public partial class MainWindow : Window
             BrowserReady = true;
             initialized.TrySetResult(true);
             if (diagnostic && runDiagnostics) await DiagnosticRunner.RunAsync(this);
-            else if (popupRequest is null) Navigate(Address.Text);
+            else if (popupRequest is null)
+            {
+                if (runDiagnostics) ShowStartSites();
+                else Navigate(Address.Text);
+            }
         }
         catch (Exception ex)
         {
@@ -238,6 +263,42 @@ public partial class MainWindow : Window
     private void BackClick(object sender, RoutedEventArgs e) { if (Browser.CanGoBack) Browser.GoBack(); }
     private void ForwardClick(object sender, RoutedEventArgs e) { if (Browser.CanGoForward) Browser.GoForward(); }
     private void ReloadClick(object sender, RoutedEventArgs e) { blocks.Clear(); Browser.CoreWebView2?.Reload(); }
+    private void StartSitesClick(object sender, RoutedEventArgs e) => ShowStartSites();
+    private void ShowStartSites()
+    {
+        var dialog = new StartSitesWindow(settings) { Owner = this };
+        if (dialog.ShowDialog() == true && dialog.SelectedUrl is not null) Navigate(dialog.SelectedUrl);
+    }
+    private async Task ToggleFullscreenAsync()
+    {
+        if (fullscreen) await LeaveFullscreenAsync();
+        else SetFullscreen(true);
+    }
+    private async Task LeaveFullscreenAsync()
+    {
+        SetFullscreen(false);
+        if (Browser.CoreWebView2 is not null)
+            await Browser.CoreWebView2.ExecuteScriptAsync("if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});");
+    }
+    private void SetFullscreen(bool enabled)
+    {
+        if (fullscreen == enabled) return;
+        fullscreen = enabled;
+        if (enabled)
+        {
+            previousWindowState = WindowState; previousWindowStyle = WindowStyle;
+            previousResizeMode = ResizeMode; previousTopmost = Topmost;
+            WindowState = WindowState.Normal; WindowStyle = WindowStyle.None;
+            ResizeMode = ResizeMode.NoResize; Topmost = true; WindowState = WindowState.Maximized;
+            NavigationBar.Visibility = StatusBar.Visibility = Visibility.Collapsed;
+        }
+        else
+        {
+            WindowState = WindowState.Normal; WindowStyle = previousWindowStyle;
+            ResizeMode = previousResizeMode; Topmost = previousTopmost; WindowState = previousWindowState;
+            NavigationBar.Visibility = StatusBar.Visibility = Visibility.Visible;
+        }
+    }
     private void ChooseVlcClick(object sender, RoutedEventArgs e)
     {
         var dialog = new OpenFileDialog { Title = "VLC auswählen (vlc.exe)", Filter = "VLC media player|vlc.exe", CheckFileExists = true };

@@ -6,6 +6,13 @@ var fixtures = args.Length > 0 ? args[0] : Path.Combine(AppContext.BaseDirectory
 using var server = new FixtureServer(fixtures);
 using var probe = new StreamProbe();
 var failures = new List<string>();
+var startSettings = new Settings();
+if (startSettings.StartUrls.Count != 3 || startSettings.StartUrls[0] != "https://taraftarium.co/canli/") failures.Add("Default start sites");
+startSettings.StartUrls.Add("http://example.com/");
+var roundTrip = JsonSerializer.Deserialize<Settings>(JsonSerializer.Serialize(startSettings))!;
+if (roundTrip.StartUrls.Count != 4 || roundTrip.StartUrls[^1] != "http://example.com/") failures.Add("Added start site persistence");
+roundTrip.StartUrls.Clear();
+if (JsonSerializer.Deserialize<Settings>(JsonSerializer.Serialize(roundTrip))!.StartUrls.Count != 0) failures.Add("Deleted start sites reappeared");
 async Task Check(string path, bool expected, string kind = "", bool? live = null)
 {
     var result = await probe.CheckAsync(new(server.BaseUrl + path, server.BaseUrl + "/fixture", "FixtureAgent/1.0"));

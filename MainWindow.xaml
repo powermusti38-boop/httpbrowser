@@ -12,12 +12,13 @@
         </Style>
     </Window.Resources>
     <DockPanel>
-        <Border DockPanel.Dock="Top" Padding="12" Background="#16252F">
+        <Border x:Name="NavigationBar" DockPanel.Dock="Top" Padding="12" Background="#16252F">
             <DockPanel>
                 <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
                     <Button Content="←" ToolTip="Zurück" Click="BackClick"/>
                     <Button Content="→" ToolTip="Vorwärts" Click="ForwardClick"/>
                     <Button Content="↻" ToolTip="Neu laden / Browservideo zurückholen" Click="ReloadClick"/>
+                    <Button Content="★" ToolTip="Startadressen" Click="StartSitesClick"/>
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                     <Button Content="Öffnen" Click="NavigateClick"/>
@@ -27,7 +28,7 @@
                          Background="#F4F7F9" Foreground="#152732" Text="https://taraftarium.co/"/>
             </DockPanel>
         </Border>
-        <Border DockPanel.Dock="Bottom" Background="#16252F" Padding="14,9">
+        <Border x:Name="StatusBar" DockPanel.Dock="Bottom" Background="#16252F" Padding="14,9">
             <DockPanel>
                 <Button x:Name="PopupButton" DockPanel.Dock="Right" Visibility="Collapsed" Content="Seitenfenster öffnen …" Click="OpenPopupClick"/>
                 <Button x:Name="ReturnButton" DockPanel.Dock="Right" Visibility="Collapsed"

@@ -1,6 +1,12 @@
 # HTTPBrowser / StreamBrowser
 
-Windows-Browser mit direkter HTTP-Unterstützung und Videoübergabe an VLC. Version 1.0.4.
+Windows-Browser mit direkter HTTP-Unterstützung und Videoübergabe an VLC. Version 1.0.5.
+
+## Startdialog und Vollbild
+
+Beim Start erscheint eine Auswahl mit großen farbigen Buttons für `https://taraftarium.co/canli/`, `http://oha.to/` und `http://vavoo.to/`. **+ Adresse hinzufügen** ergänzt eine Webadresse; **−** neben einem Eintrag löscht ihn aus der Auswahl. Änderungen werden lokal gespeichert. Über **★** in der Browserleiste lässt sich die Auswahl erneut öffnen. Zusätzliche Quellenfenster öffnen ihre Quelle direkt.
+
+**F11** schaltet rahmenloses Vollbild ein oder aus. **Esc** beendet Vollbild. Auch der Vollbildknopf eines HTML-Videoplayers schaltet das App-Fenster automatisch auf Vollbild; dabei verschwinden Titelleiste, Adressleiste und Statusleiste. Beim Verlassen wird der vorherige Fensterzustand wiederhergestellt.
 
 ## Download und Start
 
