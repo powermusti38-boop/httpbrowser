@@ -145,6 +145,11 @@ public partial class MainWindow : Window
             };
             BrowserReady = true;
             initialized.TrySetResult(true);
+            if (Environment.GetCommandLineArgs().Contains("--startup-check"))
+            {
+                Application.Current.Shutdown(0);
+                return;
+            }
             if (diagnostic && runDiagnostics) await DiagnosticRunner.RunAsync(this);
             else if (popupRequest is null)
             {

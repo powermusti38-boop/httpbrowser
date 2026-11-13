@@ -1,6 +1,8 @@
 # HTTPBrowser / StreamBrowser
 
-Windows-Browser mit direkter HTTP-Unterstützung und Videoübergabe an VLC. Version 1.0.5.
+Windows-Browser mit direkter HTTP-Unterstützung und Videoübergabe an VLC. Version 1.0.6.
+
+Im entpackten Hauptordner liegt nur **StreamBrowser.exe** als Startdatei. Alle Begleitdateien und Anleitungen liegen im Unterordner **data**. Zum Starten die äußere EXE verwenden; den Ordner data daneben lassen. Der native Starter benötigt selbst keine installierte .NET-Laufzeit.
 
 ## Startdialog und Vollbild
 
